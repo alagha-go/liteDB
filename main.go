@@ -1,32 +1,27 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"liteDB/pkgs/database"
+	"net/http"
+
+	"liteDB/PKGs/user"
+	"liteDB/PKGs/variables"
 )
 
 
-type User struct {
-	ID							string						`json:"_id,omitempty"`
-	FirstName					string						`json:"first_name,omitempty"`
-	LastName					string						`json:"last_name,omitempty"`
-	Age							int							`json:"age,omitempty"`
+func main(){
+	variables.Starter()
+	fmt.Println("starting litedb...")
+
+	user.CreateUser("Abdihakim", "Alagha", "sudo")
+	user.ReadAllUsers()
+
+	http.HandleFunc("/", Hello)
+
+
+	http.ListenAndServe(fmt.Sprintf("%s%s", variables.IP(), variables.PORT()), nil)
 }
 
-
-
-func main(){
-	var users []User
-	// var user User
-	// user = User{"", "Another New", "User", 9}
-	db := database.CreateDatabase("Interphlix").CreateCollection("Users")
-	// fmt.Println(user)
-	// cursor := db.CreateDocument(user)
-	// cursor.Decode(&user)
-	// fmt.Println(user)
-	db.GetAllDocuments().DecodeMany(&users)
-	fmt.Println(len(users))
-	bytedUsers, _ := json.Marshal(users)
-	fmt.Println(string(bytedUsers))
+func Hello(res http.ResponseWriter, req *http.Request) {
+	res.Write([]byte("<h1>It looks like you are trying to access litedb over the http Network</h1>"))
 }
