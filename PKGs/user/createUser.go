@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"liteDB/PKGs/variables"
+	"log"
 	"os"
 )
 
@@ -35,8 +36,7 @@ func CreateUser(name, password, permission string) interface{} {
 		if exists {
 			content, err := ioutil.ReadFile(variables.PasswordManagerPath)
 			HandleError(err)
-			err = json.Unmarshal(content, &ManagedUsers)
-			HandleError(err)
+			_ = json.Unmarshal(content, &ManagedUsers)
 		}
 			for _, user := range ManagedUsers {
 				user.Name = name
@@ -61,10 +61,9 @@ func CreateUser(name, password, permission string) interface{} {
 		exists = Exists(variables.PasswordManagerPath)
 		if exists {
 
-			content, err := ioutil.ReadFile(variables.UsersPath)
+			content, _ := ioutil.ReadFile(variables.UsersPath)
 			HandleError(err)
-			err = json.Unmarshal(content, &Users)
-			HandleError(err)
+			_ = json.Unmarshal(content, &Users)
 		}
 		Users = append(Users, user)
 		content, err = json.Marshal(Users)
@@ -89,6 +88,6 @@ func Exists(path string) bool {
 
 func HandleError(err error) {
 	if err != nil && !os.IsNotExist(err){
-		fmt.Println(err)
+		log.Panic(err)
 	}
 }

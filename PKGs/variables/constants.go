@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 )
 
@@ -72,19 +73,9 @@ func PORT() string {
 func Starter() {
 	exists := Exists(ManagerPath)
 	if !exists {
-		err := os.Mkdir("/data", 0644)
+		err := os.MkdirAll("/data/root/liteDB/.config", 0644)
 		HandleError(err)
-		err = os.Mkdir("/data/db", 0644)
-		HandleError(err)
-		err = os.Mkdir("/data/root", 0644)
-		HandleError(err)
-		err = os.Mkdir("/data/root/liteDB", 0644)
-		HandleError(err)
-		err = os.Mkdir("/data/root/liteDB/.config", 0644)
-		HandleError(err)
-		err = os.Mkdir("/data/db/liteDB", 0644)
-		HandleError(err)
-		err = os.Mkdir("/data/db/liteDB/.users", 0644)
+		err = os.MkdirAll("/data/db/liteDB/.users", 0644)
 		HandleError(err)
 	}
 	exists = Exists(fmt.Sprintf("%sconfig.json", ManagerPath))
@@ -115,6 +106,6 @@ func Exists(path string) bool {
 /// func to handle all errors in this pkg
 func HandleError(err error) {
 	if err != nil && !os.IsExist(err){
-		fmt.Println(err)
+		log.Panic(err)
 	}
 }
