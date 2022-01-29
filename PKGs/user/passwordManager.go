@@ -3,12 +3,12 @@ package user
 import (
 	"io/ioutil"
 	"liteDB/PKGs/variables"
-	"fmt"
 )
 
 
-func ReadAllUsers() {
+func ReadAllUsers() string {
 	content, err := ioutil.ReadFile(variables.PasswordManagerPath)
 	HandleError(err)
-	fmt.Println(string(content))
+
+	return string(content)
 }

@@ -57,7 +57,6 @@ func IP() string {
 func PORT() string {
 	var config Config
 	content, err := ioutil.ReadFile(fmt.Sprintf("%sconfig.json", ManagerPath))
-	fmt.Println(string(content))
 	HandleError(err)
 	err = json.Unmarshal(content, &config)
 	HandleError(err)
@@ -80,7 +79,7 @@ func Starter() {
 	}
 	exists = Exists(fmt.Sprintf("%sconfig.json", ManagerPath))
 	if !exists {
-		config := Config{IPAddress: "127.0.0.1", PORT: ":1480", DBPath: "/data/db/liteDB"}
+		config := Config{IPAddress: "127.0.0.1", PORT: ":1480", DBPath: "/data/db/liteDB/"}
 		content, err := json.Marshal(config)
 		HandleError(err)
 		err = ioutil.WriteFile(fmt.Sprintf("%sconfig.json", ManagerPath), content, 0644)

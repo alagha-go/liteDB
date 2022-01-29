@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"log"
 )
 
 
@@ -27,6 +26,11 @@ type Document struct {
 }
 
 
+func CreateOneDocument(dbName, colName, data string) {
+	
+}
+
+
 
 
 func GenerateSize(b int64) string {
@@ -48,6 +52,6 @@ func GenerateSize(b int64) string {
 
 func HandleError(err error) {
 	if err != nil {
-		log.Panic(err)
+		fmt.Println(err)
 	}
 }

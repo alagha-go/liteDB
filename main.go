@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"liteDB/PKGs/user"
 	"liteDB/PKGs/variables"
 )
 
@@ -12,9 +11,6 @@ import (
 func main(){
 	variables.Starter()
 	fmt.Println("starting litedb...")
-
-	user.CreateUser("Abdihakim", "Alagha", "sudo")
-	user.ReadAllUsers()
 
 	http.HandleFunc("/", Hello)
 

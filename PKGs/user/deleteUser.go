@@ -1,25 +1,29 @@
 package user
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"liteDB/PKGs/variables"
 )
 
-
 /// func to delete a user
 func DeleteUser(name, password string) error {
 	var oldUsers []User
+	var oldManagedUsers []PasswordManager
 	var newUsers []User
+	var newManagedUsers []PasswordManager
 	verified, err := VerifyUser(name, password, "read")
 	if !verified{
 		return err
 	}
 
 	content, err := ioutil.ReadFile(variables.UsersPath)
+	content1, err1 := ioutil.ReadFile(variables.PasswordManagerPath)
 	HandleError(err)
+	HandleError(err1)
+	err1 = json.Unmarshal(content1, &oldManagedUsers)
+	HandleError(err1)
 	err = json.Unmarshal(content, &oldUsers)
 	HandleError(err)
 	
@@ -28,10 +32,22 @@ func DeleteUser(name, password string) error {
 			newUsers = append(newUsers, user)
 		}
 	}
+
+
+	for _, user := range oldManagedUsers {
+		if user.Name != name {
+			newManagedUsers = append(newManagedUsers, user)
+		}
+	}
+
 	content, err = json.Marshal(newUsers)
 	HandleError(err)
+	content1, err1 = json.Marshal(newManagedUsers)
+	HandleError(err1)
 	err = ioutil.WriteFile(variables.UsersPath, content, 0644)
 	HandleError(err)
+	err1 = ioutil.WriteFile(variables.PasswordManagerPath, content1, 0644)
+	HandleError(err1)
 	
 	return nil
 }
@@ -48,13 +64,12 @@ func VerifyUser(name, password, permission string) (bool, error) {
 	err = json.Unmarshal(content, &AllUsers)
 	HandleError(err)
 
-	bytes := sha256.Sum256([]byte(password))
-	hashedPassword := string(bytes[:])
+	
 
 	for _, user := range AllUsers {
 		if user.Name == name {
 			exist = true
-			if user.Password == hashedPassword{
+			if CompareHash(password, user.Password){
 				if user.Permission == "sudo" {
 					return true, nil
 				}else if user.Permission == permission {

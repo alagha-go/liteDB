@@ -1,7 +1,6 @@
 package user
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -25,7 +24,7 @@ type PasswordManager struct {
 
 /// creating a new user for the database
 func CreateUser(name, password, permission string) interface{} {
-	if permission != variables.Permissions[0] || permission != variables.Permissions[1] || permission != variables.Permissions[2] {
+	if permission == variables.Permissions[0] || permission == variables.Permissions[1] || permission == variables.Permissions[2] {
 		var ManagedUsers []PasswordManager
 		manageUser := PasswordManager{Name: name, Password: password}
 		var Users []User
@@ -39,9 +38,10 @@ func CreateUser(name, password, permission string) interface{} {
 			_ = json.Unmarshal(content, &ManagedUsers)
 		}
 			for _, user := range ManagedUsers {
-				user.Name = name
-				fmt.Println("User with the same name already exists")
-				return nil
+				if user.Name == name {
+					fmt.Println("User with the same name already exists")
+					return nil
+				}
 			}
 			ManagedUsers = append(ManagedUsers, manageUser)
 			content, err := json.Marshal(ManagedUsers)
@@ -51,9 +51,9 @@ func CreateUser(name, password, permission string) interface{} {
 	
 	
 		/// encrypt users password before  storing to the ordinary data file
-		bytepassword := sha256.Sum256([]byte(password))
+		Hasher([]byte(password))
 		user.Name = name
-		user.Password = string(bytepassword[:])
+		user.Password = Hasher([]byte(password))
 		user.Permission = permission
 	
 	
